@@ -3,8 +3,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken'); // 토큰 발급
 const jwtSecret = process.env.SECRET_KEY;
 
+const emailRegExp = /\S+@\S+\.\S+/;
+
 const signUp = async (email, password, nickname) => {
-  if (!email.includes('@') || !email.includes('.')) {
+  if (!emailRegExp.test(email)) {
     const error = new Error('Email-Invalid');
     error.statusCode = 400;
     throw error;

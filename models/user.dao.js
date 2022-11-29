@@ -1,15 +1,23 @@
 const myDataSource = require('../models/index');
 
 const signUp = async (email, hashedPw, nickname) => {
-  await myDataSource.query(
-    `
-    INSERT INTO 
-        users ( email, nickname, password)
-    VALUES
-        (?, ?, ?)
-    `,
-    [email, nickname, hashedPw]
-  );
+  try {
+    await myDataSource.query(
+      `
+      INSERT INTO 
+          users ( email, nickname, password)
+      VALUES
+          (?, ?, ?)
+      `,
+      [email, nickname, hashedPw]
+    );
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') {
+      const error = new Error('email already exist');
+      error.statusCode = 400;
+      throw error;
+    }
+  }
 };
 
 const login = async email => {
